@@ -3,7 +3,7 @@ from rest_framework import permissions
 from todos_api.models import Todo
 from .serializers import TodoSerializer
 import jwt
-from api_example.settings import SECRET_KEY
+from core.settings import SECRET_KEY
 
 
 class ToDoUserCustomPermission(permissions.BasePermission):
