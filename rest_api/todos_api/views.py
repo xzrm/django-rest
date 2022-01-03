@@ -1,13 +1,9 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
-from rest_framework import generics
 from rest_framework import permissions
 from todos_api.models import Todo
 from users.models import NewUser
 from .serializers import TodoSerializer
-import jwt
-from core.settings import SECRET_KEY
-from rest_framework_simplejwt.authentication import JWTAuthentication
 from rest_framework import status
 from django.http import Http404
 from rest_framework.exceptions import PermissionDenied
