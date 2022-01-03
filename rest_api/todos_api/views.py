@@ -17,17 +17,13 @@ class ToDoUserCustomPermission(permissions.BasePermission):
     message = "Forbidden."
 
     def has_object_permission(self, request, view, obj):
+        print(request.user)
         if request.user.is_superuser:
             return True
         return obj.user == request.user
 
 
 class TodoListViewSet(viewsets.ModelViewSet, ToDoUserCustomPermission):
-    def get_user_id(self):
-        token = self.request.headers["Authorization"].split(" ")[1]
-        payload = jwt.decode(jwt=token, key=SECRET_KEY, algorithms=["HS256"])
-        return payload["user_id"]
-
     def get_user_obj(self, id):
         try:
             return NewUser.objects.get(id=id)
@@ -35,7 +31,7 @@ class TodoListViewSet(viewsets.ModelViewSet, ToDoUserCustomPermission):
             raise Http404
 
     def create(self, request):
-        user_id = self.get_user_id()
+        user_id = request.user.id
         user = self.get_user_obj(user_id)
         serializer = TodoSerializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -44,8 +40,7 @@ class TodoListViewSet(viewsets.ModelViewSet, ToDoUserCustomPermission):
 
     def update(self, request, pk):
         todo = Todo.objects.get(pk=pk)
-        user_id = self.get_user_id()
-        user = self.get_user_obj(user_id)
+        user = self.get_user_obj(request.user.id)
 
         def update_user_field_if_authorized():
             if "user" in request.data:
